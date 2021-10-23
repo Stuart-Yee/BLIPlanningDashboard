@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/stylesheet.css')}}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body class="text-center">
+    <form action="/users/new" method="POST">
+        <h2>Register!</h2>
+        <div class="form-group">
+            <input name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+            {% with messages = get_flashed_messages(category_filter=["email"]) %}     <!-- declare a variable called messages -->
+            {% if messages %}                            <!-- check if there are any messages -->
+                {% for message in messages %}            <!-- loop through the messages -->
+                    <div class="alert alert-danger" role="alert">
+                        {{message}}
+                    </div>                <!-- display each message in a paragraph tag -->
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+        </div>
+        <div class="form-group">
+
+            <input name="first_name" class="form-control" aria-describedby="emailHelp" placeholder="First Name">
+            {% with messages = get_flashed_messages(category_filter=["first_name"]) %}     <!-- declare a variable called messages -->
+            {% if messages %}                            <!-- check if there are any messages -->
+                {% for message in messages %}            <!-- loop through the messages -->
+                    <div class="alert alert-danger" role="alert">
+                        {{message}}
+                    </div>                <!-- display each message in a paragraph tag -->
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+        </div>
+        <div class="form-group">
+
+            <input name="last_name" class="form-control" aria-describedby="emailHelp" placeholder="Last Name">
+            {% with messages = get_flashed_messages(category_filter=["last_name"]) %}     <!-- declare a variable called messages -->
+            {% if messages %}                            <!-- check if there are any messages -->
+                {% for message in messages %}            <!-- loop through the messages -->
+                    <div class="alert alert-danger" role="alert">
+                        {{message}}
+                    </div>                <!-- display each message in a paragraph tag -->
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+        </div>
+
+        <div class="form-group">
+
+            <input name="password" type="password" class="form-control" placeholder="Password">
+        </div>
+        <div class="form-group">
+
+            <input name="password_confirm" type="password" class="form-control" placeholder="Confirm Password">
+            {% with messages = get_flashed_messages(category_filter=["password"]) %}     <!-- declare a variable called messages -->
+            {% if messages %}                            <!-- check if there are any messages -->
+                {% for message in messages %}            <!-- loop through the messages -->
+                    <div class="alert alert-danger" role="alert">
+                        {{message}}
+                    </div>                <!-- display each message in a paragraph tag -->
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Register</button>
+        <a href="/">Back to login</a>
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </form>
+
+</body>
+</html>
