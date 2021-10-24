@@ -8,18 +8,18 @@
 
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/stylesheet.css')}}">
     <meta charset="UTF-8">
-    <title>Add Item</title>
+    <title>Add Records</title>
 </head>
 <body class="text-center">
 <div class="container">
     <div class="row">
-        <div class="col-9">
-            <h1>Add Item to Database</h1>
+        <div class="col-12">
+            <h1>Add Records to Database</h1>
         </div>
     </div>
     <div class="row">
-        <div class="col-9">
-
+        <div class="col-6">
+            <h2>Add Item</h2>
 
             <form action="/newItem" method="post">
                 <div class="form-group">
@@ -46,6 +46,33 @@
                         {% endif %}
                     {% endwith %}
                     <input class="form-control" id="itemDescription" placeholder="Enter item description" name="description">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        <div class="col-6">
+            <h2>Add Warehouse</h2>
+
+            <form action="/newWarehouse" method="post">
+                <div class="form-group">
+                    {% with messages = get_flashed_messages(category_filter=["code"]) %}
+                        {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    <input class="form-control" id="warehouseCode" aria-describedby="emailHelp"
+                           placeholder="Enter warehouse id" name="code">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" id="warehouseName" placeholder="Enter warehouse name (optional)" name="warehouse_name">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" id="description" placeholder="Enter description (optional)" name="description">
                 </div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
