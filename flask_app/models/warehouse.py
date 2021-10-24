@@ -1,6 +1,7 @@
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask import Flask, flash
 from flask_app import app
+from flask_app.models import planning, item, quantity
 SCHEMA = "blistock"
 
 class Warehouse:
@@ -11,6 +12,7 @@ class Warehouse:
         self.code = data["code"]
         self.description = data["description"]
         self.updated_by = data["updated_by"] # This must be the user's id
+        self.warehouse_items = []
 
     @classmethod
     def save_warehouse(cls, data):
@@ -29,10 +31,33 @@ class Warehouse:
 
     @classmethod
     def find_by_id(cls, data):
-        query = "SELECT * FROM warehouses WHERE id = %(id)s;"
+        query ="SELECT * FROM quantities, plannings " \
+               "LEFT JOIN items ON plannings.item_id = items.id " \
+               "LEFT JOIN warehouses ON plannings.warehouse_id = warehouses.id " \
+               "LEFT JOIN users on plannings.updated_by = users.id " \
+               "WHERE warehouses.id = %(id)s " \
+               "GROUP BY items.id;"
         result = connectToMySQL(SCHEMA).query_db(query, data)
+        print(result)
         if len(result) > 0:
-            return cls(result[0])
+            warehouse = cls(result[0])
+            warehouse.description = result[0]['warehouses.description']
+            for row in result:
+                warehouse_item_data = {
+                    "item_number": row['item_number'],
+                    "description": row['description'],
+                    "warehouse": row['code'],
+                    "warehouse_min": row['min'],
+                    "warehouse_max": row['max'],
+                    "warehouse_qty": row['on_hand'],
+                    "planning_updated_by": row['first_name'] + " " + row['last_name'],
+                    "planning_updated_on": row['plannings.updated_at'],
+                    "quantity_updated_on": row['updated_at'],
+                    "quantity_updated_by": ""
+                }
+                this_item = item.WarehouseItem(warehouse_item_data)
+                warehouse.warehouse_items.append(this_item)
+            return warehouse
         else:
             return False
 
