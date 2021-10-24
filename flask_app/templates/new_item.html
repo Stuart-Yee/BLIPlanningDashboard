@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/stylesheet.css')}}">
+    <meta charset="UTF-8">
+    <title>Add Item</title>
+</head>
+<body class="text-center">
+<div class="container">
+    <div class="row">
+        <div class="col-9">
+            <h1>Add Item to Database</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-9">
+
+
+            <form action="/newItem" method="post">
+                <div class="form-group">
+                    <input class="form-control" id="itemNumber" aria-describedby="emailHelp"
+                           placeholder="Enter item number" name="item_number">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" id="itemDescription" placeholder="Enter item description" name="description">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
