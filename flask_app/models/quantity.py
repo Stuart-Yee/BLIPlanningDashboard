@@ -22,6 +22,11 @@ class Quantity:
                 "(%(on_hand)s, %(warehouse_id)s, %(item_id)s, %(updated_by)s, now(), now());"
         return connectToMySQL(SCHEMA).query_db(query, data)
 
-
+    @classmethod
+    def update_quantity(cls, data):
+        query = "UPDATE quantities SET on_hand = %(on_hand)s, " \
+                "updated_by = %(updated_by)s, updated_at = now() " \
+                "WHERE quantities.id = %(id)s; "
+        connectToMySQL(SCHEMA).query_db(query, data)
 
 

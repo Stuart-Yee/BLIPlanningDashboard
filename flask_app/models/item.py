@@ -67,5 +67,7 @@ class WarehouseItem:
         self.plan_updated_date = data["planning_updated_on"]  # not persisted, particular to warehouse
         self.qty_updated_by = data["quantity_updated_by"]  # not persisted, particular to warehouse
         self.qty_updated_on = data["quantity_updated_on"]  # not persisted, particular to warehouse
+        self.quantity_id = data["quantity_id"]
+        self.planning_id = data["planning_id"]
 
 

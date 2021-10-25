@@ -25,6 +25,7 @@
                 <input name="item_number" placeholder="Item Number">
                 <input name="min" placeholder="min">
                 <input name="max" placeholder="max">
+                <input name="quantity" placeholder="Starting quantity">
                 <button>Add Item to Warehouse</button>
             </form>
 
@@ -40,11 +41,19 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-9">
-            <table class="table">
+        <div class="col-12">
+            <table class="table table-responsive">
                 <thead>
                 <tr>
-                <th>Item Number</th><th>Item Description</th><th>Min</th><th>Max</th><th>On Hand</th>
+                    <th>Item Number</th>
+                    <th>Item Description</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>On Hand</th>
+                    <th>Below Min?</th>
+                    <th>Capacity</th>
+                    <th>Planning</th>
+                    <th>Count</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -55,7 +64,32 @@
                         <td>{{item.whs_min}}</td>
                         <td>{{item.whs_max}}</td>
                         <td>{{item.whs_qty}}</td>
-
+                        <td>
+                            {% if item.whs_qty < item.whs_min %}
+                                <p class="alert alert-danger">Yes</p>
+                            {% elif item.whs_qty < item.whs_max %}
+                                <p class="alert alert-warning">Below Max</p>
+                            {% else %}
+                                <p class="alert alert-success">Fully Stocked</p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.whs_qty < item.whs_max %}
+                                {{item.whs_max - item.whs_qty}}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/warehouses/plannings/{{item.planning_id}}"><button>Update Min/Max</button></a>
+                        </td>
+                        <td>
+                            <form action="/warehouses/quantities/{{item.quantity_id}}" method="post">
+                                <input name="quantity" placeholder="On hand" min="0", step="1">
+                                <input type="hidden" name="warehouse_id" value="{{warehouse.id}}">
+                                <button>Update Quantity</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

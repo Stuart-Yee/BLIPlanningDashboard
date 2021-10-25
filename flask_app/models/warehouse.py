@@ -31,21 +31,19 @@ class Warehouse:
 
     @classmethod
     def find_by_id(cls, data):
-        query ="SELECT * FROM quantities, plannings " \
-               "LEFT JOIN items ON plannings.item_id = items.id " \
-               "LEFT JOIN warehouses ON plannings.warehouse_id = warehouses.id " \
-               "LEFT JOIN users on plannings.updated_by = users.id " \
-               "WHERE warehouses.id = %(id)s " \
-               "GROUP BY items.id;"
+        query = "SELECT * FROM warehouses " \
+              "LEFT JOIN plannings on plannings.warehouse_id = warehouses.id " \
+              "LEFT JOIN items on items.id = plannings.item_id " \
+              "LEFT JOIN quantities on items.id = quantities.item_id " \
+              "LEFT JOIN users on users.id = plannings.updated_by " \
+              "WHERE warehouses.id = %(id)s"
         result = connectToMySQL(SCHEMA).query_db(query, data)
-        print(result)
         if len(result) > 0:
             warehouse = cls(result[0])
-            warehouse.description = result[0]['warehouses.description']
             for row in result:
                 warehouse_item_data = {
                     "item_number": row['item_number'],
-                    "description": row['description'],
+                    "description": row['items.description'],
                     "warehouse": row['code'],
                     "warehouse_min": row['min'],
                     "warehouse_max": row['max'],
@@ -53,6 +51,8 @@ class Warehouse:
                     "planning_updated_by": row['first_name'] + " " + row['last_name'],
                     "planning_updated_on": row['plannings.updated_at'],
                     "quantity_updated_on": row['updated_at'],
+                    "quantity_id": row["quantities.id"],
+                    "planning_id": row["plannings.id"],
                     "quantity_updated_by": ""
                 }
                 this_item = item.WarehouseItem(warehouse_item_data)

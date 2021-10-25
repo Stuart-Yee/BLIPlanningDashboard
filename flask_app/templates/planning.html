@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/stylesheet.css')}}">
+    <meta charset="UTF-8">
+    <title>Add Records</title>
+</head>
+<body class="text-center">
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <h2>{{display_warehouse.code}}</h2>
+            <p>{{display_warehouse.warehouse_name}}</p>
+        </div>
+        <div class="col-3">
+            <h2>{{display_item.item_number}}</h2>
+            <p>{{display_item.description}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            {% with messages = get_flashed_messages(category_filter=["item"]) %}
+                        {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                        {% endif %}
+            {% endwith %}
+            <form action="/warehouses/plannings/{{display_planning.id}}" method="post">
+                <label for="min">
+                    Min:
+                </label>
+                <input id="min" name="min" value="{{display_planning.min}}">
+                <label for="max">
+                    Max:
+                </label>
+                <input id="max" name="max" value="{{display_planning.max}}">
+                <input type="hidden" name="warehouse_id" value="{{display_warehouse.id}}">
+                <button>Update</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+
+
+
+        </div>
+    </div>
+
+
+</div>
+</body>
+</html>
