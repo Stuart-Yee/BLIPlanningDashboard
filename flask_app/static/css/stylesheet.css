@@ -69,3 +69,28 @@ body {
     -moz-appearance: none;
     appearance: none;
 }
+
+.scroll-800 {
+    border: solid 2px gray;
+    background-color: white;
+    width: 800px;
+    height: 800px;
+    overflow-y: scroll;
+}
+
+.scroll-300 {
+    border: solid 2px gray;
+    background-color: white;
+    height: 300px;
+    overflow-y: scroll;
+}
+
+.title-icon {
+    width: auto;
+    height: 75px;
+}
+
+.form-row {
+    padding: 3px;
+    margin: 5px;
+}

@@ -18,7 +18,8 @@ class Item:
 
     @classmethod
     def get_all(cls):
-        query = "SELECT * FROM items;"
+        query = "SELECT * FROM items " \
+                "ORDER BY items.item_number;"
         results = connectToMySQL(SCHEMA).query_db(query)
         items = []
         for item in results:

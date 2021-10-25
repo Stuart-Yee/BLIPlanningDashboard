@@ -16,9 +16,9 @@ def add_warehouse():
         if Warehouse.validate_warehouse(data):
             data["updated_by"] = session["user_id"]
             warehouse_id = Warehouse.save_warehouse(data)
-            return redirect("/addRecords")
+            return redirect("/success")
         else:
-            return redirect("/addRecords")
+            return redirect("/success")
     else:
         return redirect("/")
 
@@ -27,6 +27,9 @@ def show_warehouse(id):
     if(session["logged_in"]):
         data = {'id': id}
         warehouse = Warehouse.find_by_id(data)
+        print(len(warehouse.warehouse_items))
+        for item in warehouse.warehouse_items:
+            print(item.item_number)
         return render_template("showWarehouse.html", warehouse=warehouse)
     else:
         return redirect("/")
@@ -39,7 +42,10 @@ def add_to_warehouse(id):
             data[key] = request.form[key]
         data["warehouse_id"] = id
         data["updated_by"] = session["user_id"]
-        data["on_hand"] = int(request.form["quantity"])
+        if request.form["quantity"] == "" or request.form["quantity"] is None:
+            data["on_hand"] = 0
+        else:
+            data["on_hand"] = int(request.form["quantity"])
         if Item.find_by_itemnumber_exact(request.form):
             data["item_id"] = Item.find_by_itemnumber_exact(request.form).id
         if Planning.validate_planning(data):

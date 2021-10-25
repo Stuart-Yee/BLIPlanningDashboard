@@ -17,16 +17,9 @@ def add_item():
                 item_id = Item.save_item(data)
                 return redirect("/success")
             else:
-                return redirect("/addRecords")
+                return redirect("/success")
         else:
             return "Sorry, that request method is not valid"
-    else:
-        return redirect("/")
-
-@app.route("/addRecords")
-def add_records():
-    if(session["logged_in"]):
-        return render_template("addRecords.html")
     else:
         return redirect("/")
 

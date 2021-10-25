@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/stylesheet.css')}}">
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body class="text-center">
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Inventory Planning Dashboard</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <h2>Add Records to Database</h2>
+        </div>
+        <div class="col-9">
+
+        </div>
+    </div>
+
+    <div class="row form-row">
+        <div class="col-3">
+            <img src="{{url_for('static', filename='images/warehouse.png')}}" alt="warehouse" class="title-icon"><h2>Add Warehouse</h2>
+
+            <form action="/newWarehouse" method="post">
+                <div class="form-group">
+                    {% with messages = get_flashed_messages(category_filter=["code"]) %}
+                        {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    <input class="form-control" id="warehouseCode" aria-describedby="emailHelp"
+                           placeholder="Enter warehouse id" name="code">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" id="warehouseName" placeholder="Enter warehouse name (optional)" name="warehouse_name">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" id="description" placeholder="Enter description (optional)" name="description">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add Warehouse</button>
+            </form>
+        </div>
+        <div class="col-9 scroll-300">
+            <h2>Warehouses</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Warehouse Code</th>
+                        <th>Warehouse Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for warehouse in warehouses %}
+                    <tr>
+                        <td><a href="/warehouses/show/{{warehouse.id}}">{{warehouse.code}}</a></td>
+                        <td>{{warehouse.warehouse_name}}</td>
+                        <td>{{warehouse.description}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+        <div class="row form-row">
+        <div class="col-3">
+            <img src="{{url_for('static', filename='images/wrench-951.png')}}" alt="item" class="title-icon"><h2>Add Item</h2>
+
+            <form action="/newItem" method="post">
+                <div class="form-group">
+                    {% with messages = get_flashed_messages(category_filter=["item_number"]) %}
+                        {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    <input class="form-control" id="itemNumber" aria-describedby="emailHelp"
+                           placeholder="Enter item number" name="item_number">
+                </div>
+                <div class="form-group">
+                    {% with messages = get_flashed_messages(category_filter=["description"]) %}
+                        {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    <input class="form-control" id="itemDescription" placeholder="Enter item description" name="description">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add Item</button>
+            </form>
+        </div>
+        <div class="col-9 scroll-300">
+            <h2>Items</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item Number</th>
+                        <th>Item Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{item.item_number}}</td>
+                        <td>{{item.description}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

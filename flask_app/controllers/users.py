@@ -2,11 +2,16 @@ from flask import Flask, render_template, session, flash, redirect, request
 from flask_app import app
 from flask_bcrypt import Bcrypt
 from flask_app.models.user import User
+from flask_app.models.warehouse import Warehouse
+from flask_app.models.item import Item
 bcrypt = Bcrypt(app)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if session["logged_in"]:
+        return redirect("/success")
+    else:
+        return render_template("index.html")
 
 @app.route("/register")
 def registration():
@@ -45,7 +50,9 @@ def create_user():
 @app.route("/success")
 def success():
     if session["logged_in"] == True:
-        return render_template("success.html")
+        warehouses = Warehouse.get_all()
+        items = Item.get_all()
+        return render_template("dashboard.html", warehouses=warehouses, items=items)
     else:
         return redirect("/")
 

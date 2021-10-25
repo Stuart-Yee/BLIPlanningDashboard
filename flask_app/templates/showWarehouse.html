@@ -13,35 +13,21 @@
 <body class="text-center">
 <div class="container">
     <div class="row">
-        <div class="col-12">
+        <div class="col-1">
+            <img src="{{url_for('static', filename='images/warehouse.png')}}" alt="warehouse" class="title-icon">
+        </div>
+        <div class="col-10">
             <h1>{{warehouse.code}} {{warehouse.warehouse_name}}</h1>
             <p>{{warehouse.description}}</p>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-
-            <form action="/warehouses/{{warehouse.id}}/addPlanning" method="post">
-                <input name="item_number" placeholder="Item Number">
-                <input name="min" placeholder="min">
-                <input name="max" placeholder="max">
-                <input name="quantity" placeholder="Starting quantity">
-                <button>Add Item to Warehouse</button>
-            </form>
-
-            {% with messages = get_flashed_messages(category_filter=["item"]) %}
-                        {% if messages %}
-                                {% for message in messages %}
-                                    <div class="alert alert-danger" role="alert">
-                                        {{message}}
-                                    </div>
-                                {% endfor %}
-                        {% endif %}
-            {% endwith %}
+        <div class="col-1">
+            <a href="/"><button class="btn btn-outline-success">Back</button></a>
+            <a href="/logout"><button class="btn btn-outline-danger">Logout</button></a>
         </div>
     </div>
+
     <div class="row">
-        <div class="col-12">
+        <div class="col-12 scroll-800">
             <table class="table table-responsive">
                 <thead>
                 <tr>
@@ -56,8 +42,11 @@
                     <th>Count</th>
                 </tr>
                 </thead>
+
                 <tbody>
-                    {% for item in warehouse.warehouse_items %}
+                {% with items = warehouse.warehouse_items %}
+                {% if items[0].whs_qty != None %}
+                    {% for item in items %}
                     <tr>
                         <td>{{item.item_number}}</td>
                         <td>{{item.description}}</td>
@@ -81,20 +70,52 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="/warehouses/plannings/{{item.planning_id}}"><button>Update Min/Max</button></a>
+                            <a href="/warehouses/plannings/{{item.planning_id}}"><button class="btn btn-outline-primary">Update Min/Max</button></a>
                         </td>
                         <td>
-                            <form action="/warehouses/quantities/{{item.quantity_id}}" method="post">
-                                <input name="quantity" placeholder="On hand" min="0", step="1">
+
+                            <div class="input-group mb-3">
+                                <form action="/warehouses/quantities/{{item.quantity_id}}" method="post">
+                                <input type="number" min="0" step="1" class="form-control" placeholder="On hand"
+                                       aria-label="on hand" aria-describedby="basic-addon2" name="quantity">
                                 <input type="hidden" name="warehouse_id" value="{{warehouse.id}}">
-                                <button>Update Quantity</button>
-                            </form>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary">Update Qty</button>
+                                </div>
+                                </form>
+                            </div>
+
                         </td>
                     </tr>
                     {% endfor %}
+                {% endif %}
+                {% endwith %}
                 </tbody>
+
             </table>
 
+        </div>
+    </div>
+        <div class="row">
+        <div class="col-12 form-row">
+
+            <form action="/warehouses/{{warehouse.id}}/addPlanning" method="post" class="form-inline">
+                <input name="item_number" placeholder="Item Number" class="form-control">
+                <input name="min" placeholder="min" class="form-control">
+                <input name="max" placeholder="max" class="form-control">
+                <input name="quantity" placeholder="Starting quantity" class="form-control">
+                <button class="btn btn-outline-success">Add Item to Warehouse</button>
+            </form>
+
+            {% with messages = get_flashed_messages(category_filter=["item"]) %}
+                        {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                        {% endif %}
+            {% endwith %}
         </div>
     </div>
 

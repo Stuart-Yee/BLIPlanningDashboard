@@ -48,13 +48,16 @@ class Warehouse:
                     "warehouse_min": row['min'],
                     "warehouse_max": row['max'],
                     "warehouse_qty": row['on_hand'],
-                    "planning_updated_by": row['first_name'] + " " + row['last_name'],
                     "planning_updated_on": row['plannings.updated_at'],
                     "quantity_updated_on": row['updated_at'],
                     "quantity_id": row["quantities.id"],
                     "planning_id": row["plannings.id"],
                     "quantity_updated_by": ""
                 }
+                if row['first_name'] is None or row['last_name'] is None:
+                    warehouse_item_data["planning_updated_by"] = None
+                else:
+                    warehouse_item_data["planning_updated_by"] = row['first_name'] + " " + row['last_name']
                 this_item = item.WarehouseItem(warehouse_item_data)
                 warehouse.warehouse_items.append(this_item)
             return warehouse
