@@ -9,6 +9,7 @@ flask = "*"
 openpyxl = "*"
 bcrypt = "*"
 flask-bcrypt = "*"
+werkzeug = "*"
 
 [dev-packages]
 
