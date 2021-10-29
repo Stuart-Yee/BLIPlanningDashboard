@@ -42,17 +42,23 @@ class Item:
             return False
 
     @staticmethod
-    def validate_item(item):
+    def validate_item(item, imported=False):
         valid_item = True
+        errors = []  # for imports, will return a list of error messages
         if len(item["item_number"]) < 1 or item["item_number"] == None:
+            errors.append("Item number missing")
             flash("Please enter item number", "item_number")
             valid_item = False
         if len(item["description"]) < 1 or item["description"] == None:
+            errors.append("Description missing")
             flash("Please enter an item description", "description")
             valid_item = False
         if Item.find_by_itemnumber_exact(item):
+            errors.append("Item number already exists")
             flash("Item number already exists", "item_number")
             valid_item = False
+        if imported:
+            return [valid_item, errors]  # for imports, returns boolean value and error messages
         return valid_item
 
 class WarehouseItem:

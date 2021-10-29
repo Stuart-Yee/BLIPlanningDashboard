@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/stylesheet.css')}}">
+    <meta charset="UTF-8">
+    <title>Import Records</title>
+</head>
+<body class="text-center">
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Mass Imports</h1>
+        </div>
+    </div>
+    <div class="row import-row">
+        <div class="col-3">
+            <img src="{{url_for('static', filename='images/warehouse.png')}}" alt="warehouse" class="title-icon">
+            <h2>Import Warehouses</h2>
+        </div>
+        <div class="col-9">
+            <h3>Map Import Columns</h3>
+            <form action="/testupload" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="code">Warehouse Code Column</label>
+                    <input name="warehouse_code" value="A" id="code">
+                </div>
+                <div class="form-group">
+                    <label for="name">Warehouse Name Column</label>
+                    <input name="warehouse_name" id="name" value="B">
+                </div>
+                <div class="form-group">
+                    <label for="description">Warehouse Desc Column</label>
+                    <input name="warehouse_description" id="description" value="C">
+                </div>
+                <div class="form-group">
+                    Ignore First Row:
+                    <label class="switch">
+                        <input type="checkbox" name="ignore_first_row" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                    <input type="file" name="warehouse_imports"
+                           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

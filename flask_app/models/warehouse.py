@@ -74,12 +74,17 @@ class Warehouse:
             return False
 
     @staticmethod
-    def validate_warehouse(warehouse):
+    def validate_warehouse(warehouse, imported=False):  # imported denotes whether validation is for import or not
         valid_item = True
         if len(warehouse["code"]) < 1:
-            flash("Please enter a warehouse designation", "code")
+            error = "Please enter a warehouse designation"
+            flash(error, "code")
             valid_item = False
         if Warehouse.find_exact_by_code(warehouse):
-            flash("That Warehouse designation already exists!", "code")
+            error = "That Warehouse designation already exists!"
+            flash(error, "code")
             valid_item = False
+            if imported:
+                return [valid_item, error]   # for record import validation, returns a dictionary which includes
+            # the error message
         return valid_item
