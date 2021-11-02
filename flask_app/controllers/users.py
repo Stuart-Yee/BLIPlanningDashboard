@@ -8,7 +8,7 @@ bcrypt = Bcrypt(app)
 
 @app.route("/")
 def index():
-    if session["logged_in"]:
+    if session.get("logged_in") == True:
         return redirect("/success")
     else:
         return render_template("index.html")
