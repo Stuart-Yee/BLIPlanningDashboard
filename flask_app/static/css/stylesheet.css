@@ -78,6 +78,14 @@ body {
     overflow-y: scroll;
 }
 
+.scroll-100p {
+    border: solid 2px gray;
+    background-color: white;
+    width: 1200px;
+    height: 100%;
+    overflow-y: scroll;
+}
+
 .scroll-300 {
     border: solid 2px gray;
     background-color: white;

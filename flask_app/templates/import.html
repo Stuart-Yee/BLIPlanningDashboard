@@ -4,14 +4,15 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/stylesheet.css')}}">
     <meta charset="UTF-8">
     <title>Import Records</title>
 </head>
 <body class="text-center">
-<div class="container">
+<div class="container scroll-100p">
     <div class="row">
         <div class="col-12">
             <h1>Mass Imports</h1>
@@ -44,11 +45,123 @@
                         <span class="slider round"></span>
                     </label>
                 </div>
-                    <input type="file" name="warehouse_imports"
-                           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                <input type="file" name="warehouse_imports"
+                       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
 
-                    <button type="submit" class="btn btn-primary">Upload</button>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+    <div class="row import-row">
+        <div class="col-3">
+            <img src="{{url_for('static', filename='images/wrench-951.png')}}" alt="item" class="title-icon">
+            <h2>Import Items</h2>
+        </div>
+        <div class="col-9">
+            <h3>Map Import Columns</h3>
+            <form action="/import/items" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="item_number">Item Number Column</label>
+                    <input name="item_number" value="A" id="item_number">
                 </div>
+                <div class="form-group">
+                    <label for="item_description">Item Description Column</label>
+                    <input name="item_description" id="item_description" value="B">
+                </div>
+                <div class="form-group">
+                    Ignore First Row:
+                    <label class="switch">
+                        <input type="checkbox" name="ignore_first_row" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <input type="file" name="item_imports"
+                       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+    <div class="row import-row">
+        <div class="col-3">
+            <img src="{{url_for('static', filename='images/plan.png')}}" alt="planning" class="title-icon">
+            <h2>Import Items to Warehouses</h2>
+        </div>
+        <div class="col-9">
+            <h3>Map Import Columns</h3>
+            <form action="/import/warehouse_items" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="warehouse_item_number">Item Number Column</label>
+                    <input name="warehouse_item_number" value="A" id="warehouse_item_number">
+                </div>
+                <div class="form-group">
+                    <label for="item_warehouse">Warehouse Column</label>
+                    <input name="item_warehouse" id="item_warehouse" value="B">
+                </div>
+                <div class="form-group">
+                    <label for="min">Min Column</label>
+                    <input name="min" id="min" value="C">
+                </div>
+                <div class="form-group">
+                    <label for="max">Max Column</label>
+                    <input name="max" id="max" value="D">
+                </div>
+                <div class="form-group">
+                    <label for="starting_qty">Quantity Column</label>
+                    <input name="starting_qty" id="starting_qty" value="E">
+                </div>
+                <div class="form-group">
+                    Ignore First Row:
+                    <label class="switch">
+                        <input type="checkbox" name="ignore_first_row" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    Update Values:
+                    <label class="switch">
+                        <input type="checkbox" name="ignore_first_row" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <input type="file" name="warehouse_item_imports"
+                       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+    <div class="row import-row">
+        <div class="col-3">
+            <img src="{{url_for('static', filename='images/count.png')}}" alt="item" class="title-icon">
+            <h2>Import Item Quantities</h2>
+        </div>
+        <div class="col-9">
+            <h3>Map Import Columns</h3>
+            <form action="/import/quantities" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="count_item">Item Number Column</label>
+                    <input name="count_item" value="A" id="count_item">
+                </div>
+                <div class="form-group">
+                    <label for="count_warehouse">Warehouse Column</label>
+                    <input name="count_warehouse" id="count_warehouse" value="B">
+                </div>
+                <div class="form-group">
+                    <label for="item_qty">On-Hand Column</label>
+                    <input name="item_qty" id="item_qty" value="C">
+                </div>
+                <div class="form-group">
+                    Ignore First Row:
+                    <label class="switch">
+                        <input type="checkbox" name="ignore_first_row" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <input type="file" name="item_count"
+                       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+
+                <button type="submit" class="btn btn-primary">Upload</button>
             </form>
         </div>
     </div>
