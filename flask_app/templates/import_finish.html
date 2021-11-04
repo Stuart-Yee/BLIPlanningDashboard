@@ -13,13 +13,20 @@
 <body class="text-center">
 <div class="container">
     <div class="row">
-        <div class="col-12">
-            <h1>Mass Imports</h1>
+        <div class="col-10">
+            <h1>Import Complete:</h1>
+        </div>
+        <div class="col-2">
+            <a href="/"><button class="btn btn-outline-success">Dashboard</button></a>
+            <a href="/import"><button class="btn btn-outline-success">Back</button></a>
+            <form action="/logout" method="post">
+                <button class="btn btn-outline-danger">Logout</button>
+            </form>
         </div>
     </div>
     <div class="row import-row">
         <div class="col-12 scroll-800">
-            {% with messages = get_flashed_messages(category_filter=["warehouse_import_fail"]) %}     <!-- declare a variable called messages -->
+            {% with messages = get_flashed_messages(category_filter=["import_fail"]) %}     <!-- declare a variable called messages -->
             {% if messages %}                            <!-- check if there are any messages -->
                 {% for message in messages %}            <!-- loop through the messages -->
                     <div class="alert alert-danger" role="alert">
@@ -28,7 +35,7 @@
             {% endfor %}
             {% endif %}
         {% endwith %}
-            {% with messages = get_flashed_messages(category_filter=["warehouse_import_successful"]) %}     <!-- declare a variable called messages -->
+            {% with messages = get_flashed_messages(category_filter=["import_successful"]) %}     <!-- declare a variable called messages -->
             {% if messages %}                            <!-- check if there are any messages -->
                 {% for message in messages %}            <!-- loop through the messages -->
                     <div class="alert alert-success" role="alert">

@@ -5,6 +5,7 @@ from flask_app.models.item import Item
 from flask_app.models.warehouse import Warehouse
 from openpyxl import workbook, worksheet, load_workbook, writer
 
+
 #  TODO module for being able to accept CSV
 
 @app.route("/import")
@@ -13,6 +14,7 @@ def import_files():
         return render_template("import.html")
     else:
         return redirect("/")
+
 
 @app.route("/import/warehouses", methods=["POST"])
 def import_warehouses():
@@ -24,24 +26,19 @@ def import_warehouses():
                     request.form["warehouse_name"],
                     request.form["warehouse_description"]]
 
-        #spreasheet columns will be:
+        # spreadsheet columns will be:
         #   mappings[0] = Warehouse Code
         #   mappings[1] = Warehouse Name
         #   mappings[2] = Warehouse Description
 
-        if request.form.get("ignore_first_row") == "on":
-            ignore_first = True
-        else:
-            ignore_first = False
-
         wb = load_workbook(uploaded_file)
         sheet = wb.active
-        if ignore_first:
+        if request.form.get("ignore_first_row") == "on":
             start = 2
         else:
             start = 1
         end = sheet.max_row + 1
-        print(f"Importing {end - start} rows")
+
         for i in range(start, end):
             warehouse = {
                 "code": sheet[f"{mappings[0]}{i}"].value,
@@ -57,13 +54,49 @@ def import_warehouses():
             if validation[0]:
                 Warehouse.save_warehouse(warehouse)
                 log_row += " Import successful!"
-                flash(log_row, "warehouse_import_successful")
+                flash(log_row, "import_successful")
             else:
                 log_row += f" Import failed: {validation[1]}"
-                flash(log_row, "warehouse_import_fail")
+                flash(log_row, "import_fail")
             print(log_row)
-        return redirect("/import/warehouses/result")
+        return redirect("/import/result")
 
-@app.route("/import/warehouses/result")
-def show_whs_import_result():
-    return render_template("importResultTest.html")
+
+@app.route("/import/items", methods=["POST"])
+def import_items():
+    if session.get("logged_in") != True or request.method != "POST":
+        return redirect("/")
+    else:
+        uploaded_file = request.files["item_imports"]
+        mappings = [request.form["item_number"],
+                    request.form["item_description"]]
+        # mappings[0] = item number
+        # mappings[1] = item description
+
+        wb = load_workbook(uploaded_file)
+        sheet = wb.active
+        end = sheet.max_row+1
+        if request.form.get("ignore_first_row") == "on":
+            start = 2
+        else:
+            start = 1
+        for i in range(start, end):
+            item = {"item_number": sheet[f"{mappings[0]}{i}"].value, "description": sheet[f"{mappings[1]}{i}"].value}
+            for key in item:
+                if item[key] == None:
+                    item[key] = ""
+            log_row = item["item_number"] + " " + item["description"]
+            validation = Item.validate_item(item, imported=True)
+            if validation[0]:
+                log_row += " Import successful!"
+                flash(log_row, "import_successful")
+                Item.save_item(item)
+            else:
+                for error in validation[1]:
+                    log_row += (" " + error)
+                flash(log_row, "import_fail")
+        return redirect("/import/result")
+
+@app.route("/import/result")
+def show_import_result():
+    return render_template("import_finish.html")

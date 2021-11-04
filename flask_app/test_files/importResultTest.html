@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/stylesheet.css')}}">
+    <meta charset="UTF-8">
+    <title>Import Records</title>
+</head>
+<body class="text-center">
+<div class="container">
+    <div class="row">
+        <div class="col-10">
+            <h1>Import Complete:</h1>
+        </div>
+        <div class="col-2">
+            <a href="/"><button class="btn btn-outline-success">Dashboard</button></a>
+            <a href="/import"><button class="btn btn-outline-success">Back</button></a>
+            <form action="/logout" method="post">
+                <button class="btn btn-outline-danger">Logout</button>
+            </form>
+        </div>
+    </div>
+    <div class="row import-row">
+        <div class="col-12 scroll-800">
+            {% with messages = get_flashed_messages(category_filter=["warehouse_import_fail"]) %}     <!-- declare a variable called messages -->
+            {% if messages %}                            <!-- check if there are any messages -->
+                {% for message in messages %}            <!-- loop through the messages -->
+                    <div class="alert alert-danger" role="alert">
+                        {{message}}
+                    </div>                <!-- display each message in a paragraph tag -->
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+            {% with messages = get_flashed_messages(category_filter=["warehouse_import_successful"]) %}     <!-- declare a variable called messages -->
+            {% if messages %}                            <!-- check if there are any messages -->
+                {% for message in messages %}            <!-- loop through the messages -->
+                    <div class="alert alert-success" role="alert">
+                        {{message}}
+                    </div>                <!-- display each message in a paragraph tag -->
+            {% endfor %}
+            {% endif %}
+        {% endwith %}
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
