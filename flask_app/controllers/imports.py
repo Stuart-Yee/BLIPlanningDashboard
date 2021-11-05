@@ -3,6 +3,8 @@ from flask_app import app
 from flask_bcrypt import Bcrypt
 from flask_app.models.item import Item
 from flask_app.models.warehouse import Warehouse
+from flask_app.models.quantity import Quantity
+from flask_app.models.planning import Planning
 from openpyxl import workbook, worksheet, load_workbook, writer
 
 
@@ -96,6 +98,62 @@ def import_items():
                     log_row += (" " + error)
                 flash(log_row, "import_fail")
         return redirect("/import/result")
+
+@app.route("/import/warehouse_items", methods=["POST"])
+def import_warehouse_items():
+    return redirect("/import/result")
+
+@app.route("/import/quantities", methods=["POST"])
+def import_counts():
+    mappings = [request.form["count_item"],
+                request.form["count_warehouse"],
+                request.form["item_qty"]]
+
+    file = request.files["item_count"]
+    excel = load_workbook(file)
+    sheet = excel.active
+
+    if request.form["ignore_first_row"] == "on":
+        start = 2
+    else:
+        start = 1
+
+    end = sheet.max_row + 1
+
+    for i in range(start, end):
+        data = {
+            "code": sheet[f"{mappings[1]}{i}"].value,
+            "item_number": sheet[f"{mappings[0]}{i}"].value,
+            "on_hand": sheet[f"{mappings[2]}{i}"].value,
+            "updated_by": session.get("user_id")
+        }
+        for key in data:
+            if data[key] is None:
+                data[key] = ""
+        result = Quantity.update_by_warehouse_item(data)
+
+        if result:
+            flash(
+                f"Updated count for {data['item_number']} in "
+                f"{data['code']} to {data['on_hand']}",
+            "import_successful")
+        else:
+            flash(
+                f"Could not update count for {data['item_number']} "
+                f"in {data['code']}",
+                "import_fail"
+            )
+
+    # ### TESTING quantity methods
+    # data = {"code": mappings[1],
+    #         "item_number": mappings[0],
+    #         "on_hand": mappings[2],
+    #         "updated_by": session.get("user_id")}
+    # result = Quantity.update_by_warehouse_item(data)
+    # flash(result, "import_successful")
+    # #### END TEST ####
+
+    return redirect("/import/result")
 
 @app.route("/import/result")
 def show_import_result():

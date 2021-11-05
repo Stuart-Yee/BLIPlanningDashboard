@@ -29,4 +29,26 @@ class Quantity:
                 "WHERE quantities.id = %(id)s; "
         connectToMySQL(SCHEMA).query_db(query, data)
 
+    @classmethod
+    def update_by_warehouse_item(cls, data):
+        find = cls.exists(data)
+        if find:
+            data["id"] = find
+            cls.update_quantity(data)
+            return True
+        else:
+            return False
 
+    @staticmethod
+    def exists(data):
+        query = "SELECT * FROM quantities " \
+                "JOIN warehouses ON warehouses.id = quantities.warehouse_id " \
+                "JOIN items ON items.id = quantities.item_id " \
+                "WHERE warehouses.code = %(code)s and " \
+                "items.item_number = %(item_number)s;"
+        results = connectToMySQL(SCHEMA).query_db(query, data)
+        if len(results) < 1:
+            return False
+        else:
+            print(results[0])
+            return results[0]["id"]
