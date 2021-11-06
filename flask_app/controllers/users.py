@@ -4,7 +4,34 @@ from flask_bcrypt import Bcrypt
 from flask_app.models.user import User
 from flask_app.models.warehouse import Warehouse
 from flask_app.models.item import Item
+from functools import wraps
 bcrypt = Bcrypt(app)
+
+# def superuser(f):
+#     @wraps(f)
+#     def decorated_function(*args, **kwargs):
+#
+#         if not g.user.superuser:
+#             flash("You do not have permission to view that page", "warning")
+#             abort(404)
+#
+#         return f(*args, **kwargs)
+#
+#     return decorated_function
+
+def logged_in(f):
+    @wraps(f)
+    def decorated_func(*args, **kwargs):
+        if session.get("logged_in"):
+            return f(*args, **kwargs)
+        else:
+            return redirect("/")
+    return decorated_func
+
+@app.route("/login_test")
+@logged_in
+def login_test():
+    return "You are logged in!"
 
 @app.route("/")
 def index():
@@ -48,13 +75,11 @@ def create_user():
     return redirect("/register")
 
 @app.route("/success")
+@logged_in
 def success():
-    if session["logged_in"] == True:
-        warehouses = Warehouse.get_all()
-        items = Item.get_all()
-        return render_template("dashboard.html", warehouses=warehouses, items=items)
-    else:
-        return redirect("/")
+    warehouses = Warehouse.get_all()
+    items = Item.get_all()
+    return render_template("dashboard.html", warehouses=warehouses, items=items)
 
 @app.route("/logout", methods=["POST"])
 def logout():

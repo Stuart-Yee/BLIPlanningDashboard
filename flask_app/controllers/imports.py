@@ -5,22 +5,22 @@ from flask_app.models.item import Item
 from flask_app.models.warehouse import Warehouse
 from flask_app.models.quantity import Quantity
 from flask_app.models.planning import Planning
+from flask_app.controllers.users import logged_in
 from openpyxl import workbook, worksheet, load_workbook, writer
 
 
 #  TODO module for being able to accept CSV
 
 @app.route("/import")
+@logged_in
 def import_files():
-    if session.get("logged_in") == True:
-        return render_template("import.html")
-    else:
-        return redirect("/")
+    return render_template("import.html")
 
 
 @app.route("/import/warehouses", methods=["POST"])
+@logged_in
 def import_warehouses():
-    if session.get("logged_in") != True or request.method != "POST":
+    if request.method != "POST":
         return redirect("/")
     else:
         uploaded_file = request.files["warehouse_imports"]
@@ -65,8 +65,9 @@ def import_warehouses():
 
 
 @app.route("/import/items", methods=["POST"])
+@logged_in
 def import_items():
-    if session.get("logged_in") != True or request.method != "POST":
+    if request.method != "POST":
         return redirect("/")
     else:
         uploaded_file = request.files["item_imports"]
@@ -77,7 +78,7 @@ def import_items():
 
         wb = load_workbook(uploaded_file)
         sheet = wb.active
-        end = sheet.max_row+1
+        end = sheet.max_row + 1
         if request.form.get("ignore_first_row") == "on":
             start = 2
         else:
@@ -99,11 +100,15 @@ def import_items():
                 flash(log_row, "import_fail")
         return redirect("/import/result")
 
+
 @app.route("/import/warehouse_items", methods=["POST"])
+@logged_in
 def import_warehouse_items():
     return redirect("/import/result")
 
+
 @app.route("/import/quantities", methods=["POST"])
+@logged_in
 def import_counts():
     mappings = [request.form["count_item"],
                 request.form["count_warehouse"],
@@ -136,7 +141,7 @@ def import_counts():
             flash(
                 f"Updated count for {data['item_number']} in "
                 f"{data['code']} to {data['on_hand']}",
-            "import_successful")
+                "import_successful")
         else:
             flash(
                 f"Could not update count for {data['item_number']} "
@@ -155,6 +160,8 @@ def import_counts():
 
     return redirect("/import/result")
 
+
 @app.route("/import/result")
+@logged_in
 def show_import_result():
     return render_template("import_finish.html")
