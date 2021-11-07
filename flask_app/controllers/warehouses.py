@@ -41,7 +41,6 @@ def add_warehouse():
 def show_warehouse(id):
     data = {'id': id}
     warehouse = Warehouse.find_by_id(data)
-    print(len(warehouse.warehouse_items))
     return render_template("showWarehouse.html", warehouse=warehouse)
 
 
@@ -59,7 +58,7 @@ def add_to_warehouse(id):
         data["on_hand"] = int(request.form["quantity"])
     if Item.find_by_itemnumber_exact(request.form):
         data["item_id"] = Item.find_by_itemnumber_exact(request.form).id
-    if Planning.validate_planning(data):
+    if Planning.validate_planning(data)[0]:
         Planning.save_planning(data)
         Quantity.save_quantity(data)
     return redirect(f"/warehouses/show/{id}")

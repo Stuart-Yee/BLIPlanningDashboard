@@ -36,7 +36,6 @@ class Planning:
                 "LEFT JOIN items ON items.id = plannings.item_id " \
                 "WHERE plannings.id = %(id)s;"
         results = connectToMySQL(SCHEMA).query_db(query, data)
-        print(results)
         if len(results) > 0:
             this_planning = cls(results[0])
             item_data = {
@@ -79,24 +78,55 @@ class Planning:
                 "WHERE plannings.id = %(id)s;"
         connectToMySQL(SCHEMA).query_db(query, data)
 
+    @classmethod
+    def update_from_whs_item(cls, data):
+        planning_id = Planning.find_with_whs_and_item(data)
+        if planning_id:
+            data["id"] = planning_id.id
+            Planning.update_planning(data)
+            return planning_id
+        else:
+            return False
+
 
     @staticmethod
-    def validate_planning(data):
+    def validate_planning(data, imported=False, update=False):
         data["id"] = data["warehouse_id"]
         valid_planning = True
+        errors = []
         if not warehouse.Warehouse.find_by_id(data):
-            flash("Could not find warehouse", "warehouse")
+            error = "Could not find warehouse"
             valid_planning = False
+            if imported:
+                errors.append(error)
+            else:
+                flash(error, "warehouse")
+
         if not item.Item.find_by_itemnumber_exact(data):
-            flash(f"Could not find item {data['item_number']}", "item")
+            error = f"Could not find item {data['item_number']}"
             valid_planning = False
+            if imported:
+                errors.append(error)
+            else:
+                flash(error, "item")
+
         if int(data["min"]) > int(data["max"]):
-            flash("Min must be less than Max", "item")
             valid_planning = False
-        if Planning.find_with_whs_and_item(data):
-            flash("Item already added to this warehouse", "item")
-            valid_planning = False
-        return valid_planning
+            error = "Min must be less than Max"
+            if imported:
+                errors.append(error)
+            else:
+                flash(error, "item")
+        if not update:
+            if Planning.find_with_whs_and_item(data):
+                valid_planning = False
+                error = "Item already added to this warehouse"
+                if imported:
+                    errors.append(error)
+                else:
+                    flash(error, "item")
+
+        return [valid_planning, errors]
 
     @staticmethod
     def validate_update(data):

@@ -50,5 +50,4 @@ class Quantity:
         if len(results) < 1:
             return False
         else:
-            print(results[0])
             return results[0]["id"]

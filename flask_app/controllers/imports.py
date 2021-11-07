@@ -104,6 +104,70 @@ def import_items():
 @app.route("/import/warehouse_items", methods=["POST"])
 @logged_in
 def import_warehouse_items():
+    mappings = [
+        request.form["warehouse_item_number"],
+        request.form["item_warehouse"],
+        request.form["min"],
+        request.form["max"],
+        request.form["starting_qty"]
+    ]
+
+    file = request.files["warehouse_item_imports"]
+    wb = load_workbook(file)
+    sheet = wb.active
+    if request.form.get("ignore_first_row") == "on":
+        start = 2
+    else:
+        start = 1
+    end = sheet.max_row + 1
+    for i in range(start, end):
+
+        data = {
+            "item_number": sheet[f"{mappings[0]}{i}"].value,
+            "code": sheet[f"{mappings[1]}{i}"].value,
+            "min": sheet[f"{mappings[2]}{i}"].value,
+            "max": sheet[f"{mappings[3]}{i}"].value,
+            "on_hand": sheet[f"{mappings[4]}{i}"].value,
+            "updated_by": session["user_id"],
+        }
+        this_warehouse = Warehouse.find_exact_by_code(data)
+        if this_warehouse:
+            warehouse_id = this_warehouse.id
+        else:
+            warehouse_id = 0
+        this_item = Item.find_by_itemnumber_exact(data)
+        if this_item:
+            data["item_id"] = this_item.id
+        else:
+            data["item_id"] = 0
+        data["warehouse_id"] = warehouse_id
+        for key in data:
+            if data[key] is None:
+                if key == "min" or key == "max" or key == "on_hand":
+                    data[key] = 0
+                else:
+                    data[key] = ""
+            if key == "min" or key == "max" or key == "on_hand":
+                data[key] = int(data[key])
+
+
+        if request.form.get("update") == "on":
+            result = Planning.validate_planning(data, imported=True, update=True)
+        else:
+            result = Planning.validate_planning(data, imported=True)
+        if result[0]:
+            flash(f"Successfully updated min/max for {data['item_number']} "
+                      f"in {data['code']}", "import_successful")
+            updated = Planning.update_from_whs_item(data)
+            if not updated:
+                Planning.save_planning(data)
+                Quantity.save_quantity(data)
+            Quantity.update_by_warehouse_item(data)
+        else:
+            message = f"Import failed for {data['item_number']} in {data['code']}: "
+            for error in result[1]:
+                message += error + " "
+            flash(message, "import_fail")
     return redirect("/import/result")
 
 

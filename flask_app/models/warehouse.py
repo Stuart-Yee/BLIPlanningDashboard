@@ -36,7 +36,8 @@ class Warehouse:
               "LEFT JOIN items on items.id = plannings.item_id " \
               "LEFT JOIN quantities on items.id = quantities.item_id " \
               "LEFT JOIN users on users.id = plannings.updated_by " \
-              "WHERE warehouses.id = %(id)s"
+              "WHERE warehouses.id = %(id)s AND " \
+              "quantities.warehouse_id = %(id)s;"
         result = connectToMySQL(SCHEMA).query_db(query, data)
         if len(result) > 0:
             warehouse = cls(result[0])
