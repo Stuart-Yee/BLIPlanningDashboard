@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, flash, redirect, request
+from flask import Flask, render_template, session, flash, redirect, request, send_file
 from flask_app import app
 from flask_bcrypt import Bcrypt
 from flask_app.models.warehouse import Warehouse
@@ -6,7 +6,12 @@ from flask_app.models.planning import Planning
 from flask_app.models.item import Item
 from flask_app.models.quantity import Quantity
 from flask_app.controllers.users import logged_in
-from openpyxl import workbook, worksheet, load_workbook, writer
+from openpyxl import Workbook, worksheet, load_workbook, writer
+import os
+from datetime import datetime
+
+TODAY = datetime.today().strftime("%m-%d-%Y")
+
 bcrypt = Bcrypt(app)
 
 @app.route("/newWarehouse", methods=["POST"])
@@ -29,9 +34,6 @@ def add_warehouse():
 #     if(session["logged_in"]):
 #         data = {'id': id}
 #         warehouse = Warehouse.find_by_id(data)
-#         print(len(warehouse.warehouse_items))
-#         for item in warehouse.warehouse_items:
-#             print(item.item_number)
 #         return render_template("showWarehouse.html", warehouse=warehouse)
 #     else:
 #         return redirect("/")
@@ -41,6 +43,8 @@ def add_warehouse():
 def show_warehouse(id):
     data = {'id': id}
     warehouse = Warehouse.find_by_id(data)
+    if not warehouse:
+        warehouse = Warehouse.empty_by_id(data)
     return render_template("showWarehouse.html", warehouse=warehouse)
 
 
@@ -128,3 +132,57 @@ def update_quantity(qty_id):
     warehouse = request.form["warehouse_id"]
     Quantity.update_quantity(data)
     return redirect(f"/warehouses/show/{warehouse}")
+
+@app.route("/warehouses/download/<int:id>")
+@logged_in
+def download_warehouse_items(id):
+    data = {'id': id}
+    wb = Workbook()
+    ws = wb.active
+
+    ws["A1"].value = "Warehouse Report:"
+
+    ws["A2"].value = TODAY
+    #Table column names
+    ws["A3"].value = "Item Number"
+    ws["B3"].value = "Item Description"
+    ws["C3"].value = "MIN"
+    ws["D3"].value = "MAX"
+    ws["E3"].value = "ON-HAND"
+    ws["F3"].value = "Below Min?"
+    ws["G3"].value = "Restock Quantity"
+
+    row = 4
+
+
+    warehouse = Warehouse.find_by_id(data)
+    if warehouse:
+        for line in warehouse.warehouse_items:
+            ws[f"A{row}"].value = line.item_number
+            ws[f"B{row}"].value = line.description
+            ws[f"C{row}"].value = line.whs_min
+            ws[f"D{row}"].value = line.whs_max
+            ws[f"E{row}"].value = line.whs_qty
+            if line.whs_qty < line.whs_min:
+                ws[f"F{row}"].value = "YES"
+            elif line.whs_qty < line.whs_max:
+                ws[f"F{row}"].value = "Below Max"
+            else:
+                ws[f"F{row}"].value = "Fully Stocked"
+            if line.whs_qty < line.whs_max:
+                ws[f"G{row}"].value = line.whs_max - line.whs_qty
+            else:
+                ws[f"G{row}"].value = 0
+            row += 1
+    else:
+        warehouse = Warehouse.empty_by_id(data)
+
+    ws["B1"].value = warehouse.code + " " + warehouse.warehouse_name
+
+    wb.save("flask_app/temp_files/TEMP.xlsx")
+
+
+    # return "hello!"
+    return send_file("temp_files/TEMP.xlsx", as_attachment=True, mimetype='application/vnd.ms-excel', attachment_filename=TODAY+warehouse.code+"export.xlsx")
+
+

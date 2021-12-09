@@ -25,6 +25,7 @@
             <form action="/logout" method="post">
                 <button class="btn btn-outline-danger">Logout</button>
             </form>
+            <a href="/warehouses/download/{{warehouse.id}}">Download Min/Max</a>
         </div>
     </div>
 
@@ -46,6 +47,7 @@
                 </thead>
 
                 <tbody>
+                {% if warehouse.warehouse_items != None %}
                 {% with items = warehouse.warehouse_items %}
                 {% if items[0].whs_qty != None %}
                     {% for item in items %}
@@ -92,6 +94,7 @@
                     {% endfor %}
                 {% endif %}
                 {% endwith %}
+                {% endif %}
                 </tbody>
 
             </table>

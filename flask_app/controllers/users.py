@@ -5,7 +5,9 @@ from flask_app.models.user import User
 from flask_app.models.warehouse import Warehouse
 from flask_app.models.item import Item
 from functools import wraps
+
 bcrypt = Bcrypt(app)
+
 
 # def superuser(f):
 #     @wraps(f)
@@ -19,6 +21,7 @@ bcrypt = Bcrypt(app)
 #
 #     return decorated_function
 
+# My decorator to check if user is logged in:
 def logged_in(f):
     @wraps(f)
     def decorated_func(*args, **kwargs):
@@ -28,10 +31,13 @@ def logged_in(f):
             return redirect("/")
     return decorated_func
 
+
 @app.route("/login_test")
+# testing my new decorator!
 @logged_in
 def login_test():
     return "You are logged in!"
+
 
 @app.route("/")
 def index():
@@ -40,10 +46,11 @@ def index():
     else:
         return render_template("index.html")
 
+
 @app.route("/register")
 def registration():
-
     return render_template("registration.html")
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -56,6 +63,7 @@ def login():
         return redirect("/success")
     else:
         return redirect("/")
+
 
 @app.route("/users/new", methods=["POST"])
 def create_user():
@@ -74,12 +82,14 @@ def create_user():
 
     return redirect("/register")
 
+
 @app.route("/success")
 @logged_in
 def success():
     warehouses = Warehouse.get_all()
     items = Item.get_all()
     return render_template("dashboard.html", warehouses=warehouses, items=items)
+
 
 @app.route("/logout", methods=["POST"])
 def logout():

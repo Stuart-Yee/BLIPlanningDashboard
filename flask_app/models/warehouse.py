@@ -30,6 +30,17 @@ class Warehouse:
         return warehouses
 
     @classmethod
+    def empty_by_id(cls, data):
+        query = "SELECT * FROM warehouses WHERE warehouses.id = %(id)s;"
+        results = connectToMySQL(SCHEMA).query_db(query, data)
+        if len(results) > 0:
+            warehouse = cls(results[0])
+            warehouse.warehouse_items = None
+            return  warehouse
+        else:
+            return False
+
+    @classmethod
     def find_by_id(cls, data):
         query = "SELECT * FROM warehouses " \
               "LEFT JOIN plannings on plannings.warehouse_id = warehouses.id " \
